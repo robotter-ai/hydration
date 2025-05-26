@@ -128,7 +128,7 @@ function create_hummingbot_password() {
 		echo
 	fi
 
-	export GATEWAY_PASSPHRASE="$password"
+	export CLIENT_PASSWORD="$password"
 
 	docker exec -i hummingbot sh <<EOF
 		mkdir -p /tmp/hummingbot
@@ -197,9 +197,18 @@ function create_gateway_certificates() {
 	done
 
 	if [ -z "$password" ]; then
-		echo
-		read -s -p "Enter your strong Hummingbot Gateway certificates password: " password
-		echo
+		if [ -z "$GATEWAY_PASSPHRASE" ]; then
+			echo
+			read -s -p "Enter your strong Hummingbot Gateway certificates password (press Enter to reuse Hummingbot Client password): " password
+			echo
+			if [ -z "$password" ]; then
+				password="$CLIENT_PASSWORD"
+				echo "Using Hummingbot Client password for Gateway certificates."
+				echo
+			fi
+		else
+			password="$GATEWAY_PASSPHRASE"
+		fi
 	fi
 	if [ -z "$destination" ]; then
 		echo
@@ -230,16 +239,23 @@ EOF
 EOF
 }
 
+function cleanup() {
+	unset CLIENT_PASSWORD
+	unset GATEWAY_PASSPHRASE
+}
+
 # Main logic to handle script arguments
 case "$1" in
 	hummingbot)
 		init
 		create_hummingbot
+		cleanup
 		attach_to_hummingbot
 		;;
 	gateway)
 		init
 		create_gateway
+		cleanup
 		log_gateway
 		;;
 	all)
@@ -250,6 +266,7 @@ case "$1" in
 		restart_hummingbot
 		create_gateway
 		attach_to_hummingbot
+		cleanup
 		;;
 	*)
 		echo "Usage: $0 {hummingbot|gateway|all}"
