@@ -89,7 +89,7 @@ function restart_hummingbot() {
 	echo
 	echo "Restarting Hummingbot Client container..."
 	echo
-	docker restart hummingbot
+	docker restart hummingbot > /dev/null 2>&1
 }
 
 function log_hummingbot() {
@@ -168,7 +168,7 @@ function create_gateway() {
 }
 
 function restart_gateway() {
-	docker restart gateway
+	docker restart gateway > /dev/null 2>&1
 }
 
 function log_gateway() {
@@ -177,7 +177,7 @@ function log_gateway() {
 
 function create_gateway_certificates() {
 	password=""
-	destination="/home/gateway/certs"
+	destination="/home/hummingbot/certs"
 
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
@@ -206,6 +206,8 @@ function create_gateway_certificates() {
 		read -p "Enter the Hummingbot Gateway certificates folder path (e.g. /home/gateway/certs): " destination
 		echo
 	fi
+
+	export GATEWAY_PASSPHRASE="$password"
 
 	docker exec -i hummingbot sh <<EOF
 		mkdir -p /tmp/hummingbot
@@ -247,7 +249,7 @@ case "$1" in
 		create_gateway_certificates
 		restart_hummingbot
 		create_gateway
-		# attach_to_hummingbot
+		attach_to_hummingbot
 		;;
 	*)
 		echo "Usage: $0 {hummingbot|gateway|all}"
