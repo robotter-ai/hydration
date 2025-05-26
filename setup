@@ -75,12 +75,21 @@ function init() {
 
 function create_hummingbot() {
 	echo
-	echo "Starting hummingbot container..."
+	echo "Creating Hummingbot Client container..."
+	echo
+	echo
 	GATEWAY_PASSPHRASE="" docker compose up -d hummingbot
 }
 
 function attach_to_hummingbot() {
 	docker attach hummingbot
+}
+
+function restart_hummingbot() {
+	echo
+	echo "Restarting Hummingbot Client container..."
+	echo
+	docker restart hummingbot
 }
 
 function log_hummingbot() {
@@ -115,9 +124,11 @@ function create_hummingbot_password() {
 	fi
 	if [ -z "$destination" ]; then
 		echo
-		read -p "Enter Hummingbot Client password file path (e.g. /home/hummingbot/conf): " destination
+		read -p "Enter the Hummingbot Client password verification folder path (e.g. /home/hummingbot/conf): " destination
 		echo
 	fi
+
+	export GATEWAY_PASSPHRASE="$password"
 
 	docker exec -i hummingbot sh <<EOF
 		mkdir -p /tmp/hummingbot
@@ -133,28 +144,88 @@ EOF
 		source ~/.bashrc
 		cd /tmp/hummingbot
 		conda activate hummingbot >/dev/null 2>&1
-		python generate_hb_client_password_verification_file.py --password "$password" --destination "$destination" >/dev/null 2>&1
+		set +x
+		 python generate_hb_client_password_verification_file.py --password "$password" --destination "$destination" > /dev/null 2>&1
+		history -c
 		set +e
 EOF
-
-	echo
-	echo "Hummingbot Client password successfully configured, restarting container..."
-
-	docker restart hummingbot
 }
 
 function create_gateway() {
 	echo
-	echo "Starting gateway container..."
+	echo "Creating Hummingbot Gateway container..."
 	echo
-	echo "If you have already generated your GATEWAY_PASSPHRASE using the 'gateway generate-certs' command inside of the Hummingbot Client, enter it below:"
-	read -s -p "Enter your gateway passphrase: " gateway_passphrase
-	echo
-	GATEWAY_PASSPHRASE="$gateway_passphrase" docker compose up -d gateway
+
+	if [ -z "$GATEWAY_PASSPHRASE" ]; then
+		echo "If you have already generated your GATEWAY_PASSPHRASE using the 'gateway generate-certs' command inside of the Hummingbot Client, enter it below:"
+		read -s -p "Enter your gateway passphrase: " password
+		echo
+
+		export GATEWAY_PASSPHRASE="$password"
+	fi
+
+	docker compose up -d gateway
+}
+
+function restart_gateway() {
+	docker restart gateway
 }
 
 function log_gateway() {
 	docker logs -f gateway
+}
+
+function create_gateway_certificates() {
+	password=""
+	destination="/home/gateway/certs"
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+			--password=*)
+				set +x
+				password="${1#*=}"
+				set -x
+				;;
+			--destination=*)
+				set +x
+				destination="${1#*=}"
+				set -x
+				;;
+			*)
+		esac
+		shift
+	done
+
+	if [ -z "$password" ]; then
+		echo
+		read -s -p "Enter your strong Hummingbot Gateway certificates password: " password
+		echo
+	fi
+	if [ -z "$destination" ]; then
+		echo
+		read -p "Enter the Hummingbot Gateway certificates folder path (e.g. /home/gateway/certs): " destination
+		echo
+	fi
+
+	docker exec -i hummingbot sh <<EOF
+		mkdir -p /tmp/hummingbot
+		mkdir -p /home/hummingbot/certs
+EOF
+
+	docker cp src/python/generate_ssl_certificates.py hummingbot:/tmp/hummingbot/generate_ssl_certificates.py > /dev/null 2>&1
+
+	docker exec -i -e password="$password" -e destination="$destination" hummingbot bash --login >/dev/null 2>&1 <<'EOF'
+		set -e
+		sed -i 's/^\([[:space:]]*\[ -z "\$PS1" \] && return\)/#\1/' ~/.bashrc
+		sed -i '/case \$- in/,/esac/s/^/#/' ~/.bashrc
+		source ~/.bashrc
+		cd /tmp/hummingbot
+		conda activate hummingbot >/dev/null 2>&1
+		set +x
+		 python generate_ssl_certificates.py --password "$password" --destination "$destination" > /dev/null 2>&1
+		history -c
+		set +e
+EOF
 }
 
 # Main logic to handle script arguments
@@ -162,7 +233,6 @@ case "$1" in
 	hummingbot)
 		init
 		create_hummingbot
-		create_hummingbot_password
 		attach_to_hummingbot
 		;;
 	gateway)
@@ -170,8 +240,17 @@ case "$1" in
 		create_gateway
 		log_gateway
 		;;
+	all)
+		init
+		create_hummingbot
+		create_hummingbot_password
+		create_gateway_certificates
+		restart_hummingbot
+		create_gateway
+		# attach_to_hummingbot
+		;;
 	*)
-		echo "Usage: $0 {hummingbot|gateway}"
+		echo "Usage: $0 {hummingbot|gateway|all}"
 		exit 1
 		;;
 esac
