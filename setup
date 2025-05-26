@@ -87,6 +87,62 @@ function log_hummingbot() {
 	docker logs -f hummingbot
 }
 
+function create_hummingbot_password() {
+	password=""
+	destination="/home/hummingbot/conf"
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+			--password=*)
+				set +x
+				password="${1#*=}"
+				set -x
+				;;
+			--destination=*)
+				set +x
+				destination="${1#*=}"
+				set -x
+				;;
+			*)
+		esac
+		shift
+	done
+
+	if [ -z "$password" ]; then
+		echo
+		read -s -p "Enter your strong Hummingbot Client password: " password
+		echo
+	fi
+	if [ -z "$destination" ]; then
+		echo
+		read -p "Enter Hummingbot Client password file path (e.g. /home/hummingbot/conf): " destination
+		echo
+	fi
+
+	docker exec -i hummingbot sh <<EOF
+		mkdir -p /tmp/hummingbot
+		mkdir -p /home/hummingbot/conf
+EOF
+
+	docker cp src/python/generate_hb_client_password_verification_file.py hummingbot:/tmp/hummingbot/generate_hb_client_password_verification_file.py > /dev/null 2>&1
+
+	docker exec -i -e password="$password" -e destination="$destination" hummingbot bash --login >/dev/null 2>&1 <<'EOF'
+		set -e
+		sed -i 's/^\([[:space:]]*\[ -z "\$PS1" \] && return\)/#\1/' ~/.bashrc
+		sed -i '/case \$- in/,/esac/s/^/#/' ~/.bashrc
+		source ~/.bashrc
+		cd /tmp/hummingbot
+		conda activate hummingbot >/dev/null 2>&1
+		python generate_hb_client_password_verification_file.py --password "$password" --destination "$destination" >/dev/null 2>&1
+		set +e
+EOF
+
+	echo
+	echo "Hummingbot Client password successfully configured, restarting container..."
+
+	docker restart hummingbot
+}
+
 function create_gateway() {
 	echo
 	echo "Starting gateway container..."
@@ -106,6 +162,7 @@ case "$1" in
 	hummingbot)
 		init
 		create_hummingbot
+		create_hummingbot_password
 		attach_to_hummingbot
 		;;
 	gateway)
