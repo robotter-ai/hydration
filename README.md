@@ -1,16 +1,17 @@
 # Hummingbot + Hydration Quickstart
-A repository with scripts to easily set up Hummingbot to do market-making with Hydration (HDX).
 
-While this repository is fully functional, it serves as a product preview until the Hummingbot Foundation officially merges the code. In the meantime, the setup flow demonstrated here, using the Hummingbot Client and Gateway, remains compatible with the latest Hummingbot versions by updating the docker-compose.yml file accordingly.
+This repository provides scripts to quickly set up Hummingbot for market-making using Hydration (HDX).
 
-We greatly encorage you to read all the code available here and undestand how to setup script, the docker compose, and the python scripts work and what they do.
+While fully functional, this repository serves as a product preview until the Hummingbot Foundation officially merges the code. In the meantime, the setup process demonstrated here remains compatible with the latest Hummingbot versions by updating the `docker-compose.yml` file as needed.
+
+We strongly encourage you to review all the provided scripts and configuration files to understand how the setup scripts, Docker Compose, and Python scripts function and interact.
 
 ## Instructions
 
 ### Prerequisites
 
-- [Docker (or Docker Desktop)](https://www.docker.com/products/docker-desktop/)
-- Unix-like system (Linux, MacOS) or WSL (for Windows)
+* [Docker or Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* Unix-like operating system (Linux, macOS) or WSL (Windows)
 
 ### Create and configure the Hummingbot Client
 
@@ -21,33 +22,32 @@ cd hydration
 ./setup
 ```
 
-After running the commands above, follow the instructions to correctly configure your Hummingbot Client and Gateway
-(for example informing which password you want to use for the Humminbot Client and which one for the Hummingbot Gateway certificates).
+After executing the commands above, follow the instructions provided to configure your Hummingbot Client and Gateway. You will be prompted to set separate passwords for the Hummingbot Client and the Gateway certificates.
 
-Basically, the `setup` script work as the following:
- - Pulls the docker images from docker hub
-(if you don't have them locally yet, these operations might take some time, but they will happen only once)
- - Create a shared volumes folder (this folder has 3 folders, the `client`, the `gateway` and the `common` folders) and they will be shared with the container and have the certificates, the strategies scripts, the log files, the encrypted wallets files, etc.
- - Ask for the Hummingbot Client password, and using a python script, it configures the client password for you (we use this because we can simplify the Gateway configuration step, but you can do this manually if you prefer in this case use `./setup hummingbot` instead)
- - Ask for the Hummingbot Gateway certificeates passphrase, and also using a python script, it configures the GATEWAY_PASSPHRASE for you (again you can do this manually with `./setup gateway` if you prefer)
- - After that the script restarts the containers and attach to the Hummingbot Client, after informing your password, you should be able to see that the Hummingbot Gateway is online, and you can operate as normal
+The `setup` script performs the following steps:
 
-### How to run strategies
+* Pulls Docker images from Docker Hub (this may take time initially but will occur only once).
+* Creates a shared volume folder with three subfolders (`client`, `gateway`, and `common`), which contain certificates, strategy scripts, log files, encrypted wallet files, etc.
+* Prompts for the Hummingbot Client password and configures it automatically using a Python script. (This simplifies the Gateway configuration. If preferred, you can configure this manually by running `./setup hummingbot`).
+* Prompts for the Hummingbot Gateway certificates passphrase and configures the `GATEWAY_PASSPHRASE` automatically with a Python script. (You may configure this manually by running `./setup gateway`).
+* Restarts the containers and attaches to the Hummingbot Client. After entering your password, you should see confirmation that the Gateway is online and operational.
 
-Once the configuration above is done, you can run your preferred strategies.
-Please refer to the Hummingbot documentation on how to use and configure them.
-Note that Hydration is an AMM (Automated Market Maker) connector, so only the strategies compatible with them can be run.
+### Running Strategies
 
-https://hummingbot.org/docs/#ways-to-use-hummingbot
+Once the configuration is complete, you can run your preferred trading strategies. Please refer to the official Hummingbot documentation for detailed guidance on strategy setup and usage.
 
-https://hummingbot.org/v1-strategies/
+Note: Hydration is an AMM (Automated Market Maker) connector, so only strategies compatible with AMMs can be used.
 
-https://hummingbot.org/strategies/
+* [Hummingbot Documentation](https://hummingbot.org/docs/#ways-to-use-hummingbot)
+* [Hummingbot v1 Strategies](https://hummingbot.org/v1-strategies/)
+* [Hummingbot Strategies](https://hummingbot.org/strategies/)
 
-Some interesting strategies and scripts to try are:
-- [scripts/amm_portfolio_manager.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_portfolio_manager.py) (Our own strategy, fully customizable and full of features for you to build on top of it)
-- [amm_arb](https://hummingbot.org/strategies/amm-arbitrage/) (Hummingbot v1 arbitrage strategy, so you can make arbitrages between different connectors)
-- [scripts/amm_price_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_price_example.py) (Hummingbot script to check the price functionality from an AMM connector)
-- [scripts/amm_trade_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_trade_example.py) (Hummingbot script to place a trade using an AMM connector)
-- [scripts/amm_data_feed.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_data_feed_example.py) (Hummingbot script that fetchs data from an AMM connector)
-- (Other strategies are in the making by the Hummingbot foundation, since the support for AMM connectors is quite new, there are a lot of good ones to come)
+Recommended strategies and scripts include:
+
+* [scripts/amm\_portfolio\_manager.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_portfolio_manager.py): A highly customizable strategy developed by us, providing numerous features to build upon.
+* [amm\_arb](https://hummingbot.org/strategies/amm-arbitrage/): Hummingbot v1 arbitrage strategy for arbitraging between different connectors.
+* [scripts/amm\_price\_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_price_example.py): Demonstrates retrieving prices from an AMM connector.
+* [scripts/amm\_trade\_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_trade_example.py): Demonstrates placing trades via an AMM connector.
+* [scripts/amm\_data\_feed.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_data_feed_example.py): Fetches data from an AMM connector.
+
+Other strategies and enhancements are currently under development by the Hummingbot Foundation, with further exciting AMM-compatible strategies expected soon.
