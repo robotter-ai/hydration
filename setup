@@ -258,19 +258,15 @@ case "$1" in
 		cleanup
 		log_gateway
 		;;
-	all)
+	*)
 		init
 		create_hummingbot
 		create_hummingbot_password
 		create_gateway_certificates
 		restart_hummingbot
 		create_gateway
-		attach_to_hummingbot
 		cleanup
-		;;
-	*)
-		echo "Usage: $0 {hummingbot|gateway|all}"
-		exit 1
+		attach_to_hummingbot
 		;;
 esac
 
