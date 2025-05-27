@@ -3,6 +3,8 @@ A repository with scripts to easily set up Hummingbot to do market-making with H
 
 While this repository is fully functional, it serves as a product preview until the Hummingbot Foundation officially merges the code. In the meantime, the setup flow demonstrated here, using the Hummingbot Client and Gateway, remains compatible with the latest Hummingbot versions by updating the docker-compose.yml file accordingly.
 
+We greatly encorage you to read all the code available here and undestand how to setup script, the docker compose, and the python scripts work and what they do.
+
 ## Instructions
 
 ### Prerequisites
@@ -16,30 +18,19 @@ While this repository is fully functional, it serves as a product preview until 
 git clone https://github.com/robotter-ai/hydration.git
 cd hydration
 
-./setup hummingbot
+./setup
 ```
 
-After running the commands above, the Hummingbot Client screen should appear. Follow the instructions and configure a strong password for yourself.
+After running the commands above, follow the instructions to correctly configure your Hummingbot Client and Gateway
+(for example informing which password you want to use for the Humminbot Client and which one for the Hummingbot Gateway certificates).
 
-When the main screen (after the login) appears, generate the SSL certificates for the Hummingbot Client to securely communicate with the Hummingbot Gateway. This can be done with the following command:
-
-```sh
-gateway generate-certs
-```
-
-Follow the instructions and define a strong password.
-
-### Create and configure the Hummingbot Gateway
-
-In another terminal window, but inside the same repository, do:
-
-```sh
-./setup gateway
-```
-
-Inform the GATEWAY_PASSPHRASE previously defined when asked.
-The HB Gateway logs should appear and start normally.
-Also, from the HB Client, on the top right side, it should appear that the HB Gateway is now online.
+Basically, the `setup` script work as the following:
+ - Pulls the docker images from docker hub
+(if you don't have them locally yet, these operations might take some time, but they will happen only once)
+ - Create a shared volumes folder (this folder has 3 folders, the `client`, the `gateway` and the `common` folders) and they will be shared with the container and have the certificates, the strategies scripts, the log files, the encrypted wallets files, etc.
+ - Ask for the Hummingbot Client password, and using a python script, it configures the client password for you (we use this because we can simplify the Gateway configuration step, but you can do this manually if you prefer in this case use `./setup hummingbot` instead)
+ - Ask for the Hummingbot Gateway certificeates passphrase, and also using a python script, it configures the GATEWAY_PASSPHRASE for you (again you can do this manually with `./setup gateway` if you prefer)
+ - After that the script restarts the containers and attach to the Hummingbot Client, after informing your password, you should be able to see that the Hummingbot Gateway is online, and you can operate as normal
 
 ### How to run strategies
 
