@@ -32,6 +32,21 @@ The `setup` script performs the following steps:
 * Prompts for the Hummingbot Gateway certificates passphrase and configures the `GATEWAY_PASSPHRASE` automatically with a Python script. (You may configure this manually by running `./setup gateway`).
 * Restarts the containers and attaches to the Hummingbot Client. After entering your password, you should see confirmation that the Gateway is online and operational.
 
+## Connecting your Wallet
+
+Inside the Hummingbot Client interface type the following command:
+```sh
+gateway connect
+```
+* Choose `hydration/amm`, and follow the instructions.
+
+* For the network and the `node URL` you can use the default values, respectively `mainnet` and `wss://rpc.hydradx.cloud`
+
+* When asked to inform your wallet `private key`, and this is very important, inform your wallet `mnemonic`.
+
+* If everything went well you'll see a message like this one: `The hydration/amm connector now uses wallet: <wallet public key>`.
+
+
 ### Running Strategies
 
 Once the configuration is complete, you can run your preferred trading strategies. Please refer to the official Hummingbot documentation for detailed guidance on strategy setup and usage.
