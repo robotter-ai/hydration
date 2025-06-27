@@ -9,9 +9,9 @@ function init() {
 		echo "Initializing Hydration + Hummingbot setup"
 
 		echo
-		echo "Pulling latest docker images..."
-		docker pull robotterlabs/hummingbot:latest
-		docker pull robotterlabs/gateway:latest
+		#echo "Pulling latest docker images..."
+		#docker pull robotterlabs/hummingbot:latest
+		#docker pull robotterlabs/gateway:latest
 
 		# Define a temporary directory for cloning
 		echo
@@ -19,12 +19,12 @@ function init() {
 		echo
 		HB_CLIENT_TEMP_DIR=$(mktemp -d)
 		echo "Cloning Hummingbot Client repository into a temporary folder: $HB_CLIENT_TEMP_DIR"
-		git clone --depth 1 --branch feat/hydration --single-branch https://github.com/robotter-ai/hummingbot.git "$HB_CLIENT_TEMP_DIR/hummingbot"
+		git clone --depth 1 --branch fix/pr/feat/hydration --single-branch https://github.com/robotter-ai/hummingbot.git "$HB_CLIENT_TEMP_DIR/hummingbot"
 
 		echo
 		HB_GATEWAY_TEMP_DIR=$(mktemp -d)
 		echo "Cloning Gateway repository into a temporary folder: $HB_GATEWAY_TEMP_DIR"
-		git clone --depth 1 --branch feat/hydration --single-branch https://github.com/robotter-ai/gateway.git "$HB_GATEWAY_TEMP_DIR/gateway"
+		git clone --depth 1 --branch feat/hydration-2.6 --single-branch https://github.com/robotter-ai/gateway.git "$HB_GATEWAY_TEMP_DIR/gateway"
 
 		echo
 
