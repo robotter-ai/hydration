@@ -42,7 +42,7 @@ gateway connect
 
 * For the network and the `node URL` you can use the default values, respectively `mainnet` and `wss://rpc.hydradx.cloud`
 
-* When asked to inform your wallet `private key`, and this is very important, inform your wallet `mnemonic`.
+* When asked to inform your wallet `private key`, and **this is very important**, inform your wallet `mnemonic`.
 
 * If everything went well you'll see a message like this one: `The hydration/amm connector now uses wallet: <wallet public key>`.
 
