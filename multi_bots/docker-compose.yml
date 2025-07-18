@@ -1,0 +1,74 @@
+services:
+  bot1:
+    container_name: bot1
+    image: mlguys/hummingbot-hydration
+    volumes:
+      - ./bot1/conf:/home/hummingbot/conf
+      - ./bot1/conf/connectors:/home/hummingbot/conf/connectors
+      - ./bot1/conf/strategies:/home/hummingbot/conf/strategies
+      - ./bot1/conf/controllers:/home/hummingbot/conf/controllers
+      - ./bot1/conf/scripts:/home/hummingbot/conf/scripts
+      - ./bot1/logs:/home/hummingbot/logs
+      - ./bot1/data:/home/hummingbot/data
+      - ./common/certs:/home/hummingbot/certs
+      - ./scripts:/home/hummingbot/scripts
+      - ./controllers:/home/hummingbot/controllers
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    tty: true
+    stdin_open: true
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      - CONFIG_PASSWORD=${CONFIG_PASSWORD}
+      - CONFIG_FILE_NAME=amm_data_feed_example.py
+
+  bot2:
+    container_name: bot2
+    image: mlguys/hummingbot-hydration
+    volumes:
+      - ./bot2/conf:/home/hummingbot/conf
+      - ./bot2/conf/connectors:/home/hummingbot/conf/connectors
+      - ./bot2/conf/strategies:/home/hummingbot/conf/strategies
+      - ./bot2/conf/controllers:/home/hummingbot/conf/controllers
+      - ./bot2/conf/scripts:/home/hummingbot/conf/scripts
+      - ./bot2/logs:/home/hummingbot/logs
+      - ./bot2/data:/home/hummingbot/data
+      - ./common/certs:/home/hummingbot/certs
+      - ./scripts:/home/hummingbot/scripts
+      - ./controllers:/home/hummingbot/controllers
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    tty: true
+    stdin_open: true
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      - CONFIG_PASSWORD=${CONFIG_PASSWORD}
+      # - CONFIG_FILE_NAME=amm_data_feed_example.py
+
+  gateway:
+    container_name: gateway
+    image: mlguys/gateway-hydration
+    ports:
+      - "15888:15888"
+      - "8080:8080"
+    volumes:
+      - ./gateway/conf:/home/gateway/conf
+      - ./gateway/logs:/home/gateway/logs
+      - ./common/certs:/home/gateway/certs
+    env_file:
+      - .env
+    environment:
+      - GATEWAY_PASSPHRASE=${GATEWAY_PASSPHRASE}
+    tty: true
+    stdin_open: true
+

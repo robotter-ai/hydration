@@ -1,9 +1,7 @@
 services:
   hummingbot:
     container_name: hummingbot
-    image: robotterlabs/hummingbot:latest
-    entrypoint: ""
-    command: bash -i -c "conda activate hummingbot && cd /home/hummingbot && ./start"
+    image: mlguys/hummingbot-hydration
     volumes:
       - ./volumes/client/conf:/home/hummingbot/conf
       - ./volumes/client/conf/connectors:/home/hummingbot/conf/connectors
@@ -20,16 +18,12 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
-    env_file:
-      - .env
     tty: true
     stdin_open: true
     network_mode: "host"
   gateway:
     container_name: gateway
-    image: robotterlabs/gateway:latest
-    entrypoint: ""
-    command: bash -i -c "cd /home/gateway && pnpm run start"
+    image: mlguys/gateway-hydration
     ports:
       - "15888:15888"
       - "8080:8080"

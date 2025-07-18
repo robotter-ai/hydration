@@ -10,8 +10,8 @@ function init() {
 
 		echo
 		#echo "Pulling latest docker images..."
-		#docker pull robotterlabs/hummingbot:latest
-		#docker pull robotterlabs/gateway:latest
+		#docker pull mlguys/hummingbot-hydration
+		#docker pull mlguys/gateway-hydration
 
 		# Define a temporary directory for cloning
 		echo
@@ -24,7 +24,7 @@ function init() {
 		echo
 		HB_GATEWAY_TEMP_DIR=$(mktemp -d)
 		echo "Cloning Gateway repository into a temporary folder: $HB_GATEWAY_TEMP_DIR"
-		git clone --depth 1 --branch feat/hydration-2.6 --single-branch https://github.com/robotter-ai/gateway.git "$HB_GATEWAY_TEMP_DIR/gateway"
+		git clone --depth 1 --branch fix/pr/feat/hydration-2.6 --single-branch https://github.com/robotter-ai/gateway.git "$HB_GATEWAY_TEMP_DIR/gateway"
 
 		echo
 
