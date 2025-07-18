@@ -18,8 +18,11 @@ After completing the main setup, create the required directories and copy the re
 
 ```bash
 # Create required directories
+mkdir -p multi_bots/controllers
+mkdir -p multi_bots/scripts
 mkdir -p multi_bots/common/certs
 mkdir -p multi_bots/gateway/conf
+mkdir -p multi_bots/gateway/logs
 mkdir -p multi_bots/bot1/conf
 mkdir -p multi_bots/bot2/conf
 
