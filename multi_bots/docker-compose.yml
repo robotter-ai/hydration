@@ -1,7 +1,7 @@
 services:
   bot1:
     container_name: bot1
-    image: mlguys/hummingbot-hydration
+    image: robotterlabs/hummingbot
     volumes:
       - ./bot1/conf:/home/hummingbot/conf
       - ./bot1/conf/connectors:/home/hummingbot/conf/connectors
@@ -29,7 +29,7 @@ services:
 
   bot2:
     container_name: bot2
-    image: mlguys/hummingbot-hydration
+    image: robotterlabs/hummingbot
     volumes:
       - ./bot2/conf:/home/hummingbot/conf
       - ./bot2/conf/connectors:/home/hummingbot/conf/connectors
@@ -57,7 +57,7 @@ services:
 
   gateway:
     container_name: gateway
-    image: mlguys/gateway-hydration
+    image: robotterlabs/gateway
     ports:
       - "15888:15888"
       - "8080:8080"
@@ -71,4 +71,3 @@ services:
       - GATEWAY_PASSPHRASE=${GATEWAY_PASSPHRASE}
     tty: true
     stdin_open: true
-
