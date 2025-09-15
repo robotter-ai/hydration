@@ -1,7 +1,7 @@
 services:
   hummingbot:
     container_name: hummingbot
-    image: mlguys/hummingbot-hydration
+    image: robotterlabs/hummingbot
     volumes:
       - ./volumes/client/conf:/home/hummingbot/conf
       - ./volumes/client/conf/connectors:/home/hummingbot/conf/connectors
@@ -23,7 +23,7 @@ services:
     network_mode: "host"
   gateway:
     container_name: gateway
-    image: mlguys/gateway-hydration
+    image: robotterlabs/gateway
     ports:
       - "15888:15888"
       - "8080:8080"

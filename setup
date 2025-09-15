@@ -10,8 +10,8 @@ function init() {
 
 		echo
 		#echo "Pulling latest docker images..."
-		#docker pull mlguys/hummingbot-hydration
-		#docker pull mlguys/gateway-hydration
+		#docker pull robotterlabs/hummingbot
+		#docker pull robotterlabs/gateway
 
 		# Define a temporary directory for cloning
 		echo
