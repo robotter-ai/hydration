@@ -59,10 +59,28 @@ Note: Hydration is an AMM (Automated Market Maker) connector, so only strategies
 
 Recommended strategies and scripts include:
 
-* [scripts/amm\_portfolio\_manager.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_portfolio_manager.py): A highly customizable strategy developed by us, providing numerous features to build upon.
+* [scripts/amm\_triangular\_arbitrage.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_triangular_arbitrage.py): Triangular arbitrage across Hydration pools.
+* [scripts/amm\_connectors\_arbitrage.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_connectors_arbitrage.py): Arbitrage between Hydration and other connectors.
 * [amm\_arb](https://hummingbot.org/strategies/amm-arbitrage/): Hummingbot v1 arbitrage strategy for arbitraging between different connectors.
 * [scripts/amm\_price\_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_price_example.py): Demonstrates retrieving prices from an AMM connector.
 * [scripts/amm\_trade\_example.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_trade_example.py): Demonstrates placing trades via an AMM connector.
 * [scripts/amm\_data\_feed.py](https://github.com/robotter-ai/hummingbot/blob/feat/hydration/scripts/amm_data_feed_example.py): Fetches data from an AMM connector.
 
 Other strategies and enhancements are currently under development by the Hummingbot Foundation, with further exciting AMM-compatible strategies expected soon.
+
+## FAQ
+
+### Why do I see this error?
+
+```
+ValueError: Could not find the exchange rate for HDX-USDT using the rate source binance rate oracle (please verify it has been correctly configured)
+hummingbot.core.utils.async_utils - ERROR - Unhandled error in background task: Could not find the exchange rate for HDX-USDT using the rate source binance rate oracle (please verify it has been correctly configured)
+```
+
+This happens because Hummingbot's default `rate_oracle_source` is `binance`, which does not list the HDX token used by Hydration-based strategies. Without an HDX price from the default oracle, Hummingbot cannot compute rates for your strategy.
+
+Fix: switch the rate oracle to our `custom` source inside the Hummingbot client:
+
+```sh
+config rate_oracle_source custom
+```
