@@ -84,3 +84,8 @@ Fix: switch the rate oracle to our `custom` source inside the Hummingbot client:
 ```sh
 config rate_oracle_source custom
 ```
+
+
+### What does "abnormal closure" mean?
+
+This error indicates the WebSocket connection to Hydration’s RPC endpoint closed unexpectedly. If it persists, restart the Gateway and try again.
